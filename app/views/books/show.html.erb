@@ -1,0 +1,24 @@
+<h1 class="mb-3"><%= @book.title %></h1>
+
+<p><strong>Author:</strong> <%= @book.author.name %></p>
+<p><strong>Series:</strong>
+  <%= @book.series_name.presence || "n/a" %>
+  <% if @book.series_position.present? %>
+    (##<%= @book.series_position %>)
+  <% end %>
+</p>
+<p><strong>Primary tag:</strong> <%= @book.tag&.name || "n/a" %></p>
+<p><strong>All tags:</strong> <%= @book.tags_raw || "n/a" %></p>
+<p><strong>ISBN:</strong> <%= @book.isbn %></p>
+<p><strong>Year:</strong> <%= @book.publication_year %></p>
+<p><strong>Pages:</strong> <%= @book.pages %></p>
+<p><strong>Price:</strong>
+  <% if @book.formatted_price %>
+    <%= number_to_currency(@book.formatted_price, unit: @book.currency == "USD" ? "$" : "£") %>
+    (<%= @book.currency %>)
+  <% else %>
+    n/a
+  <% end %>
+</p>
+
+<%= link_to "Back to books", books_path, class: "btn btn-secondary mt-3" %>

@@ -1,0 +1,69 @@
+<h1 class="mb-4">Books</h1>
+
+<div class="card mb-4">
+  <div class="card-body">
+    <h2 class="h5 mb-3">Search</h2>
+
+    <%= form_with url: books_path, method: :get, local: true, class: "row gy-2 gx-3 align-items-end" do |f| %>
+      <div class="col-sm-4">
+        <%= f.label :title, "Title", class: "form-label" %>
+        <%= f.text_field :title, value: @filters[:title], class: "form-control" %>
+      </div>
+
+      <div class="col-sm-4">
+        <%= f.label :author, "Author", class: "form-label" %>
+        <%= f.text_field :author, value: @filters[:author], class: "form-control" %>
+      </div>
+
+      <div class="col-sm-4">
+        <%= f.label :tag, "Tag", class: "form-label" %>
+        <%= f.text_field :tag, value: @filters[:tag], class: "form-control" %>
+      </div>
+
+      <div class="col-12 mt-2">
+        <%= f.submit "Search", class: "btn btn-primary me-2" %>
+        <%= link_to "Clear", books_path, class: "btn btn-outline-secondary" %>
+        <%= link_to "Import books", new_import_path, class: "btn btn-success" %>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Title</th>
+      <th>Author</th>
+      <th>Series</th>
+      <th>Series position</th>
+      <th>Primary tag</th>
+      <th>All tags</th>
+      <th>ISBN</th>
+      <th>Year</th>
+      <th>Pages</th>
+      <th>Price</th>
+      <th>Currency</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @books.each do |book| %>
+      <tr>
+        <td><%= link_to book.title, book_path(book) %></td>
+        <td><%= book.author.name %></td>
+        <td><%= book.series_name %></td>
+        <td><%= book.series_position %></td>
+        <td><%= book.tag&.name %></td>
+        <td><%= book.tags_raw %></td>
+        <td><%= book.isbn %></td>
+        <td><%= book.publication_year %></td>
+        <td><%= book.pages %></td>
+        <td>
+          <% if book.formatted_price %>
+            <%= number_to_currency(book.formatted_price, unit: book.currency == "USD" ? "$" : "£") %>
+          <% end %>
+        </td>
+        <td><%= book.currency %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
