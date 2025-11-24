@@ -1,6 +1,6 @@
 class Tag < ApplicationRecord
   #code below will make sure that if the tag will be deleted the book record will remain
-  has_many :books, dependent: :nullify 
+  has_many :books, dependent: :restrict_with_error
 
   validates :name,
             presence: true,

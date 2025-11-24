@@ -1,5 +1,7 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
   factory :author do
-    name { "MyString" }
+    name { Faker::Book.author }
   end
 end
