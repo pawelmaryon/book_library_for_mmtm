@@ -1,4 +1,5 @@
 class ImportsController < ApplicationController
+  before_action :authenticate_import_user!
   def new
   end
 
@@ -45,5 +46,20 @@ class ImportsController < ApplicationController
     unless @result
       redirect_to new_import_path, alert: "No recent import found."
     end
+  end
+
+  private
+
+  def authenticate_import_user!
+    authenticate_or_request_with_http_basic("Restricted Imports Area") do |username, password|
+      secure_compare(username, ENV.fetch("IMPORT_USERNAME", "admin")) &&
+        secure_compare(password, ENV.fetch("IMPORT_PASSWORD", "secret"))
+    end
+  end
+
+  # Protects against timing attacks
+  def secure_compare(a, b)
+    return false if a.blank? || b.blank?
+    ActiveSupport::SecurityUtils.secure_compare(a, b)
   end
 end
