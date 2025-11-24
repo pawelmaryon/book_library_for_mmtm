@@ -1,0 +1,30 @@
+<h1 class="mb-4">Import Results</h1>
+
+<% if @result %>
+  <dl class="row">
+    <dt class="col-sm-3">Total rows</dt>
+    <dd class="col-sm-9"><%= @result["total_rows"] %></dd>
+
+    <dt class="col-sm-3">Imported</dt>
+    <dd class="col-sm-9"><%= @result["imported_count"] %></dd>
+
+    <dt class="col-sm-3">Failed</dt>
+    <dd class="col-sm-9"><%= @result["errors"].size %></dd>
+  </dl>
+
+  <% if @result["errors"].any? %>
+    <h2 class="h5 mt-4">Errors</h2>
+    <ul class="list-group">
+      <% @result["errors"].each do |error| %>
+        <li class="list-group-item list-group-item-danger"><%= error %></li>
+      <% end %>
+    </ul>
+  <% end %>
+<% else %>
+  <p>No results available.</p>
+<% end %>
+
+<div class="mt-4">
+  <%= link_to "Import another file", new_import_path, class: "btn btn-secondary me-2" %>
+  <%= link_to "View books", books_path, class: "btn btn-link" %>
+</div>

@@ -1,0 +1,27 @@
+<h1 class="mb-4">Import Books</h1>
+
+<%= form_with url: import_path, local: true,
+              html: { multipart: true, data: { turbo: false }, class: "mb-4" } do |f| %>
+  <div class="mb-3">
+    <%= f.label :file, "CSV file", class: "form-label" %>
+    <%= f.file_field :file, accept: ".csv", class: "form-control" %>
+  </div>
+
+  <div>
+    <%= f.submit "Import", class: "btn btn-primary" %>
+  </div>
+<% end %>
+
+<p class="mt-4">Expected CSV headers:</p>
+<ul>
+  <li><code>title</code></li>
+<li><code>authors</code></li>
+<li><code>isbn13</code></li>
+<li><code>publication_year</code></li>
+<li><code>series_name</code></li>
+<li><code>series_position</code></li>
+<li><code>pages</code></li>
+<li><code>price_pence</code></li>
+<li><code>currency</code></li>
+<li><code>tags</code></li>
+</ul>
