@@ -25,12 +25,26 @@ class BookImport
     imported    = 0
     data_rows   = 0
 
-    csv = CSV.new(@file.read, headers: true, header_converters: :downcase)
+    # Read the raw file contents
+    raw = @file.read
 
-    validate_headers!(csv)
+    # 🔧 Normalize all line endings:
+    # - convert CRLF (\r\n) and lone CR (\r) to plain LF (\n)
+    raw = raw.gsub("\r\n", "\n").gsub("\r", "\n")
+
+    table = CSV.parse(
+      raw,
+      headers:           true,
+      header_converters: :downcase,
+      row_sep:           "\n",
+      skip_blanks:       true,
+      liberal_parsing:   true
+    )
+
+    validate_headers!(table)
 
     ActiveRecord::Base.transaction do
-      csv.each_with_index do |row, idx|
+      table.each_with_index do |row, idx|
         line_number = idx + 2 # header is line 1
 
         next if blank_row?(row)
@@ -49,19 +63,19 @@ class BookImport
     end
 
     Result.new(
-      total_rows: data_rows,
+      total_rows:     data_rows,
       imported_count: imported,
-      errors: errors
-    )
+      errors:         errors
+      )
   end
 
   private
 
-  def validate_headers!(csv)
-    headers = csv.headers.compact.map(&:strip)
-    missing = EXPECTED_HEADERS - headers
-    raise StandardError, "Missing required headers: #{missing.join(', ')}" if missing.any?
-  end
+  def validate_headers!(table)
+  headers = table.headers.compact.map { |h| h.to_s.strip }
+  missing = EXPECTED_HEADERS - headers
+  raise StandardError, "Missing required headers: #{missing.join(', ')}" if missing.any?
+end
 
   def blank_row?(row)
     row.to_h.values.all? { |v| v.to_s.strip.empty? }
@@ -86,26 +100,25 @@ class BookImport
   end
 
   def normalized_attributes(row)
-    authors_str = row["authors"].to_s
+    authors_str  = row["authors"].to_s
     first_author = authors_str.split(/;|,/).first.to_s.strip
 
-    tags_str = row["tags"].to_s
+    tags_str  = row["tags"].to_s
     first_tag = tags_str.split(/;|,/).first.to_s.strip
 
     {
       title:            row["title"].to_s.strip,
-      author_name:      first_author,
-      tag_name:         first_tag.presence,
+      author_name:      first_author,                     
+      tag_name:         first_tag.presence,               
       isbn:             row["isbn13"].to_s.strip.presence,
       publication_year: int_or_nil(row["publication_year"]),
       series_name:      row["series_name"].to_s.strip.presence,
       series_position:  int_or_nil(row["series_position"]),
       pages:            int_or_nil(row["pages"]),
       price_pence:      int_or_nil(row["price_pence"]),
-      currency:         row["currency"].to_s.strip.presence,
-      tags_raw:         tags_str.presence
+      currency:         row["currency"].to_s.strip.presence
     }
-  end
+  end 
 
   def int_or_nil(value)
     Integer(value, exception: false)
@@ -116,8 +129,8 @@ class BookImport
       Book.find_by(isbn: attrs[:isbn])
     else
       Book.find_by(
-        title:          attrs[:title],
-        series_name:    attrs[:series_name],
+        title:           attrs[:title],
+        series_name:     attrs[:series_name],
         series_position: attrs[:series_position]
       )
     end
@@ -130,8 +143,8 @@ class BookImport
   end
 
   def find_or_create_tag(name)
-    Tag.find_or_create_by!(name: name.strip.downcase)
-  end
+      Tag.find_or_create_by!(name: name.strip.downcase)
+    end
 
   def format_row_error(line_number, record)
     "Line #{line_number}: #{record.errors.full_messages.join(', ')}"
