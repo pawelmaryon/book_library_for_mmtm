@@ -7,8 +7,8 @@
     (##<%= @book.series_position %>)
   <% end %>
 </p>
-<p><strong>Primary tag:</strong> <%= @book.tag&.name || "n/a" %></p>
-<p><strong>All tags:</strong> <%= @book.tags_raw || "n/a" %></p>
+<p><strong>Genre:</strong> <%= @book.tag&.name || "n/a" %></p>
+<p><strong>Subgenre:</strong> <%= @book.tag&.subgenre || "n/a" %></p>
 <p><strong>ISBN:</strong> <%= @book.isbn %></p>
 <p><strong>Year:</strong> <%= @book.publication_year %></p>
 <p><strong>Pages:</strong> <%= @book.pages %></p>

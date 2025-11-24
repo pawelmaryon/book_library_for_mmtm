@@ -49,7 +49,7 @@
     <% @books.each do |book| %>
       <tr>
         <td><%= link_to book.title, book_path(book) %></td>
-        <td><%= book.author.name %></td>
+        <td><%= link_to book.author.name, author_path(book.author.id) %></td>
         <td><%= book.series_name %></td>
         <td><%= book.series_position %></td>
         <td><%= book.tag&.name %></td>

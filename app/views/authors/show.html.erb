@@ -1,0 +1,9 @@
+<h1 class="mb-3"><strong>Author:</strong><%= @author.name %></h1>
+
+<p><strong>Books:</strong>
+  <% @books.each do |book| %>
+  <p><%= link_to book.title, book_path(book) %></p>
+  <% end %>
+</p>
+
+<%= link_to "Back to authors", authors_path, class: "btn btn-secondary mt-3" %>

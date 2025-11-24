@@ -1,0 +1,6 @@
+<h1 class="mb-3"><strong>Authors</strong></h1>
+<% @authors.each do |author| %>
+  <p><%= link_to author[0], author_path(author[1]) %></p>
+<% end %>
+
+<%= link_to "Back to books", books_path, class: "btn btn-secondary mt-3" %>
