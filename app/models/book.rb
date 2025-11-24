@@ -33,8 +33,13 @@ class Book < ApplicationRecord
               only_integer: true,
               greater_than_or_equal_to: 0
             }
+  validates :series_position,
+            allow_nil: true,
+            numericality: {
+              only_integer: true,
+              greater_than: 0
+            }
 
-  # Simple search scopes to filter by author/title/tag
 
   scope :with_title_like, ->(q) {
     where("LOWER(books.title) LIKE ?", "%#{q.downcase}%") if q.present?
